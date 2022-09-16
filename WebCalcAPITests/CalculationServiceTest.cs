@@ -21,8 +21,11 @@ namespace WebCalcAPITests
         [Test]
         [TestCaseSource(typeof(DataClass), nameof(DataClass.TestCalculationModelCases))]
 
-        public CalculationModel TwoOperandCalculateTest(double left, double right, string operation) =>
-            _calculationService.TwoOperandCalculate(left, right, operation);
+        public CalculationModel TwoOperandCalculateTest(double left, double right, string operation)
+        {
+            return _calculationService.TwoOperandCalculate(left, right, operation);
+        }
+           
     }
 
     public class DataClass

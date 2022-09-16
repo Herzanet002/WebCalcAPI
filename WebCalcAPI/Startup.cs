@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using WebCalcAPI.Contracts.Services;
+using WebCalcAPI.Middleware;
 
 namespace WebCalcAPI
 {
@@ -37,9 +38,9 @@ namespace WebCalcAPI
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
             app.UseAuthorization();
+            app.UseMiddleware<LoggerMiddleware>();
 
             app.UseEndpoints(endpoints => 
                 endpoints.MapControllers());

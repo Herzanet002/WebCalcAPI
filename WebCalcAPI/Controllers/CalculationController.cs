@@ -21,7 +21,10 @@ namespace WebCalcAPI.Controllers
             return _calculationService.TwoOperandCalculate(left, right, operation);
         }
 
-        
-
+        [HttpPost]
+        public string GetPost([FromBody]string post)
+        {
+            return post;
+        }
     }
 }
