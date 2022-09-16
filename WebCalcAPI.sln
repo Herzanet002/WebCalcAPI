@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.32804.182
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebCalcAPI", "WebCalcAPI\WebCalcAPI.csproj", "{7A241AD7-31D2-419E-AA52-6810B90F5BCB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebCalcAPI", "WebCalcAPI\WebCalcAPI.csproj", "{7A241AD7-31D2-419E-AA52-6810B90F5BCB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{DDF4C279-614C-4720-84D5-E248699253D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebCalcAPITests", "WebCalcAPITests\WebCalcAPITests.csproj", "{01688658-FF12-4C96-AC44-6C728E0D4ACF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +19,16 @@ Global
 		{7A241AD7-31D2-419E-AA52-6810B90F5BCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A241AD7-31D2-419E-AA52-6810B90F5BCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A241AD7-31D2-419E-AA52-6810B90F5BCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01688658-FF12-4C96-AC44-6C728E0D4ACF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01688658-FF12-4C96-AC44-6C728E0D4ACF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01688658-FF12-4C96-AC44-6C728E0D4ACF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01688658-FF12-4C96-AC44-6C728E0D4ACF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{01688658-FF12-4C96-AC44-6C728E0D4ACF} = {DDF4C279-614C-4720-84D5-E248699253D0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8C498C9F-3F6A-4C30-A6EF-6EAFC79182F6}
