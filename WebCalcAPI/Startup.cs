@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using WebCalcAPI.Contracts.Services;
 
 namespace WebCalcAPI
 {
@@ -19,8 +20,11 @@ namespace WebCalcAPI
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
             services.AddControllersWithViews();
+            services.AddSingleton<ICalculationService, CalculationService>();
         }
 
+        //requestpipeline
+        //middleware
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
