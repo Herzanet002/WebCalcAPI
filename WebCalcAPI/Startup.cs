@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using WebCalcAPI.Contracts.Services;
 using WebCalcAPI.Middleware;
+using WebCalcAPI.Services;
 
 namespace WebCalcAPI
 {
@@ -22,6 +23,7 @@ namespace WebCalcAPI
             services.AddSwaggerGen();
             services.AddControllersWithViews();
             services.AddSingleton<ICalculationService, CalculationService>();
+            services.AddSingleton<IAsyncReplyRequestService, AsyncReplyRequestService>();
         }
 
         //requestpipeline
@@ -41,9 +43,10 @@ namespace WebCalcAPI
             app.UseRouting();
             app.UseAuthorization();
             app.UseMiddleware<LoggerMiddleware>();
-
+            
             app.UseEndpoints(endpoints => 
                 endpoints.MapControllers());
+            
         }
     }
 }

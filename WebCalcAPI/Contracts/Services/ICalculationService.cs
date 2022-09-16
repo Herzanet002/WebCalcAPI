@@ -4,6 +4,6 @@ namespace WebCalcAPI.Contracts.Services
 {
     public interface ICalculationService
     {
-        CalculationModel TwoOperandCalculate(double left, double right, string operation);
+        Task<CalculationModel> TwoOperandCalculate(double left, double right, string operation);
     }
 }

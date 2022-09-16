@@ -4,13 +4,13 @@ namespace WebCalcAPI.Models
 {
     public class CalculationModel
     {
-        [Required]
+        [Required(ErrorMessage = "Left cannot be empty!")]
         public double LeftOperand { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Right cannot be empty!")]
         public double RightOperand { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Operation cannot be empty!")]
         public string Operator { get; set; } = null!;
 
         public double Result { get; set; }
