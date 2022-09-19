@@ -1,6 +1,7 @@
-using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using WebCalcAPI.Contracts.Services;
 using WebCalcAPI.Middleware;
+using WebCalcAPI.Models;
 using WebCalcAPI.Services;
 
 namespace WebCalcAPI
@@ -22,8 +23,13 @@ namespace WebCalcAPI
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
             services.AddControllersWithViews();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+
+            });
             services.AddSingleton<ICalculationService, CalculationService>();
-            services.AddSingleton<IAsyncReplyRequestService, AsyncReplyRequestService>();
+            services.AddSingleton<IAsyncReplyRequestService<CalculationModel>, AsyncReplyRequestService<CalculationModel>>();
         }
 
         //requestpipeline
@@ -43,10 +49,21 @@ namespace WebCalcAPI
             app.UseRouting();
             app.UseAuthorization();
             app.UseMiddleware<LoggerMiddleware>();
-            
-            app.UseEndpoints(endpoints => 
-                endpoints.MapControllers());
-            
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapGet("/", async context =>
+                {
+                    await context.Response.WriteAsync("Hello World!");
+                });
+                //endpoints.Map("/api/requestStatus/{uniqId}", async context => {
+                //    context.Response.ContentType = "text/html; charset=utf-8";
+                //    await context.Response.WriteAsync($"{context.Request}");
+                //});
+            });
+
+
         }
     }
 }

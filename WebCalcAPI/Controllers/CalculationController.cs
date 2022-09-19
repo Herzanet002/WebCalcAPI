@@ -1,45 +1,65 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebCalcAPI.Contracts.Services;
 using WebCalcAPI.Models;
 
 namespace WebCalcAPI.Controllers
 {
+    //[Authorize]
     [Route("/api/[controller]")]
     public class CalculationController : Controller
     {
         private readonly ICalculationService _calculationService;
-        private readonly IAsyncReplyRequestService _asyncReplyRequestService;
-        public CalculationController(ICalculationService calculationService, IAsyncReplyRequestService asyncReplyRequestService)
+        private readonly IAsyncReplyRequestService<CalculationModel> _asyncReplyRequestService;
+        private readonly ILogger<CalculationController> _logger;
+
+
+        public CalculationController(ICalculationService calculationService, IAsyncReplyRequestService<CalculationModel> asyncReplyRequestService, 
+            ILogger<CalculationController> logger)
         {
             _calculationService = calculationService;
             _asyncReplyRequestService = asyncReplyRequestService;
+            _logger = logger;
         }
 
-        private async Task WaitTill(double left, double right, string operation)
+        private async Task<CalculationModel> WaitTill(double left, double right, string operation)
         {
-            await _calculationService.TwoOperandCalculate(left, right, operation);
+            return await _calculationService.TwoOperandCalculate(left, right, operation);
         }
 
         [HttpPost("{left} {operation} {right}")]
-        public Guid AsyncProcessingWorkAcceptor(double left, double right, string operation)
+        public Guid ProcessingWorkAcceptor(double left, double right, string operation)
         {
             var guid = Guid.NewGuid();
+            _logger.LogInformation($"Assigned new GUID: {guid}");
             _asyncReplyRequestService.CreateNewTask(guid, WaitTill(left, right, operation));
-            //CreateNewTask(guid, left, right, operation);
+            Response.StatusCode = 201;
             return guid;
-            //return _calculationService.TwoOperandCalculate(left, right, operation);
         }
 
-        [HttpGet("RequestStatus/{uniqId}")]
-        public IActionResult AsyncProcessingBackgroundWorker(Guid uniqId)
+        [HttpGet("{uniqId}")]
+        public async Task<IActionResult> ProcessingBackgroundWorker(Guid uniqId)
         {
-            var result = _asyncReplyRequestService.GetTask(uniqId);
-            if (result == null) return BadRequest();
-            
-            if (result.IsCompleted)
-                return Ok();
-            if (result.Status == TaskStatus.WaitingForActivation)
+           
+            var calculationResultTask = _asyncReplyRequestService.GetTask(uniqId);
+            if (calculationResultTask is null)
+            {
+                _logger.LogCritical("Calculation Task in null");
+                return BadRequest();
+            }
+
+            if (calculationResultTask.IsCompleted)
+            {
+                _logger.LogInformation($"The task {uniqId} was completed successfully");
+                return Ok(await calculationResultTask);
+            }
+
+            if (calculationResultTask.Status == TaskStatus.WaitingForActivation)
+            {
+                _logger.LogWarning($"The task {uniqId} is working yet");
                 return Accepted("Waiting for result...");
+            }
+            
 
             return BadRequest();
 

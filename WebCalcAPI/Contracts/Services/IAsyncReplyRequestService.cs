@@ -1,11 +1,11 @@
 ﻿namespace WebCalcAPI.Contracts.Services
 {
-    public interface IAsyncReplyRequestService
+    public interface IAsyncReplyRequestService<T>
     {
-        Dictionary<Guid, Task> TasksContainer { get; set; }
-        void CreateNewTask(Guid guid, Task task);
+        Dictionary<Guid, Task<T>> TasksContainer { get; set; }
+        void CreateNewTask(Guid guid, Task<T> task);
         void DeleteTask(Guid guid);
 
-        Task? GetTask(Guid guid);
+        Task<T>? GetTask(Guid guid);
     }
 }
