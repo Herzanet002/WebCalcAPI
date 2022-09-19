@@ -13,22 +13,38 @@ public class LoggerMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        var requestBody = context.Request.Body;
-
-        var url = context.Request.GetDisplayUrl();
-        using (var requestStreamReader = new StreamReader(requestBody))
+        MemoryStream requestBodyStream = null;
+        try
         {
-            var requestBodyString = await requestStreamReader.ReadToEndAsync();
-            _logger.LogInformation(
-                $"REQUEST_SERVICE: {nameof(context.TraceIdentifier)}: {context.TraceIdentifier}, " +
-                $"Method: {context.Request.Method}, RequestUri: '{url}', " +
-                $"Headers: {string.Join(" | ", context.Request.Headers.Select(header => $"{header.Key}:{string.Join(", ", header.Value)}"))}, " +
-                $"Body: {requestBodyString}");
+            var requestBody = context.Request.Body;
+            requestBodyStream = new MemoryStream();
+
+            await context.Request.Body.CopyToAsync(requestBodyStream);
+
+            requestBodyStream.Seek(0, SeekOrigin.Begin);
+            var url = context.Request.GetDisplayUrl();
+            using (var requestStreamReader = new StreamReader(requestBody))
+            {
+                var requestBodyString = await requestStreamReader.ReadToEndAsync();
+                _logger.LogInformation(
+                    $"REQUEST_SERVICE: {nameof(context.TraceIdentifier)}: {context.TraceIdentifier}, " +
+                    $"Method: {context.Request.Method}, RequestUri: '{url}', " +
+                    $"Headers: {string.Join(" | ", context.Request.Headers.Select(header => $"{header.Key}:{string.Join(", ", header.Value)}"))}, " +
+                    $"Body: {requestBodyString}");
+            }
+
+            requestBodyStream.Seek(0, SeekOrigin.Begin);
+            context.Request.Body = requestBodyStream;
+
+            await _next(context);
+            context.Request.Body = requestBody;
         }
+        finally
+        {
+            requestBodyStream?.DisposeAsync();
+        }
+        
 
-
-        await _next(context);
-        context.Request.Body = requestBody;
 
     }
 

@@ -1,4 +1,5 @@
-﻿using WebCalcAPI.Contracts.Services;
+﻿using System;
+using WebCalcAPI.Contracts.Services;
 
 namespace WebCalcAPI.Services
 {
@@ -15,15 +16,17 @@ namespace WebCalcAPI.Services
             TasksContainer.Add(guid, task);
         }
 
-        public void DeleteTask(Guid guid)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<T>? GetTask(Guid guid)
+        public async Task<T> GetTaskResult(Guid guid)
         {
             TasksContainer.TryGetValue(guid, out var taskValue);
-            return taskValue;
+            return await taskValue!;
         }
+
+        public TaskStatus GetTaskStatus(Guid guid)
+        {
+            TasksContainer.TryGetValue(guid, out var taskValue);
+            return taskValue?.Status ?? TaskStatus.Faulted;
+        }
+
     }
 }

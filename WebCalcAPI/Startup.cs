@@ -1,6 +1,6 @@
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using WebCalcAPI.Contracts.Services;
 using WebCalcAPI.Middleware;
 using WebCalcAPI.Models;
@@ -43,6 +43,7 @@ namespace WebCalcAPI
                 });
             services.AddSingleton<ICalculationService, CalculationService>();
             services.AddSingleton<IAsyncReplyRequestService<CalculationModel>, AsyncReplyRequestService<CalculationModel>>();
+            services.AddSingleton<IAuthenticateService, AuthenticateService>();
         }
 
         //requestpipeline
@@ -62,7 +63,7 @@ namespace WebCalcAPI
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            //app.UseMiddleware<LoggerMiddleware>();
+            app.UseMiddleware<LoggerMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
