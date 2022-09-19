@@ -1,4 +1,6 @@
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using WebCalcAPI.Contracts.Services;
 using WebCalcAPI.Middleware;
 using WebCalcAPI.Models;
@@ -23,11 +25,22 @@ namespace WebCalcAPI
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
             services.AddControllersWithViews();
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-            {
-                options.RequireHttpsMetadata = false;
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration["JwtOptions:Issuer"],
+                        ValidAudience = Configuration["JwtOptions:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtOptions:Key"]))
+                    };
 
-            });
+                });
             services.AddSingleton<ICalculationService, CalculationService>();
             services.AddSingleton<IAsyncReplyRequestService<CalculationModel>, AsyncReplyRequestService<CalculationModel>>();
         }
@@ -47,8 +60,9 @@ namespace WebCalcAPI
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
-            app.UseMiddleware<LoggerMiddleware>();
+            //app.UseMiddleware<LoggerMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

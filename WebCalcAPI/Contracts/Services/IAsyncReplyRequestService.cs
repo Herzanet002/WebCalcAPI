@@ -2,7 +2,6 @@
 {
     public interface IAsyncReplyRequestService<T>
     {
-        Dictionary<Guid, Task<T>> TasksContainer { get; set; }
         void CreateNewTask(Guid guid, Task<T> task);
         void DeleteTask(Guid guid);
 

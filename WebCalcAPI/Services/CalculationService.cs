@@ -5,7 +5,7 @@ namespace WebCalcAPI.Services;
 
 public class CalculationService : ICalculationService
 {
-    public async ValueTask<CalculationModel> TwoOperandCalculate(double left, double right, string operation)
+    public async Task<CalculationModel> TwoOperandCalculate(double left, double right, string operation)
     {
         var result = HandleResult(left, right, operation);
         await Task.Delay(15000);

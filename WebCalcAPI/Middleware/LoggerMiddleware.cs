@@ -26,7 +26,9 @@ public class LoggerMiddleware
                 $"Body: {requestBodyString}");
         }
 
+
         await _next(context);
+        context.Request.Body = requestBody;
 
     }
 
