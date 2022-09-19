@@ -19,10 +19,10 @@ namespace WebCalcAPI.Models
         {
             var other = obj as CalculationModel;
 
-            return other != null && 
+            return other != null &&
                    other.LeftOperand == LeftOperand &&
                    other.RightOperand == RightOperand &&
-                   other.Operator == Operator && 
+                   other.Operator == Operator &&
                    other.Result == Result;
         }
     }

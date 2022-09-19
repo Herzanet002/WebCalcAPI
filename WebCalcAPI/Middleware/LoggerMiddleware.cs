@@ -1,10 +1,12 @@
 ﻿namespace WebCalcAPI.Middleware;
 
 using Microsoft.AspNetCore.Http.Extensions;
+
 public class LoggerMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<LoggerMiddleware> _logger;
+
     public LoggerMiddleware(RequestDelegate request, ILogger<LoggerMiddleware> logger)
     {
         _next = request;
@@ -43,10 +45,5 @@ public class LoggerMiddleware
         {
             requestBodyStream?.DisposeAsync();
         }
-        
-
-
     }
-
 }
-

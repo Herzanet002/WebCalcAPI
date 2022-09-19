@@ -1,24 +1,31 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using WebCalcAPI.Contracts.Services;
 using WebCalcAPI.Models;
+using WebCalcAPI.Models.Users;
 
 namespace WebCalcAPI.Services
 {
     public class AuthenticateService : IAuthenticateService
     {
-        private readonly IConfiguration _config;
-        public AuthenticateService(IConfiguration config)
+        private readonly IOptionsMonitor<JwtOptions> _jwtOptionsMonitor;
+        private readonly IOptions<List<UserModel>> _userOptionsMonitor;
+
+        public AuthenticateService(IOptionsMonitor<JwtOptions> jwtOptionsMonitor,
+            IOptions<List<UserModel>> userOptionsMonitor)
         {
-            _config = config;
+            _jwtOptionsMonitor = jwtOptionsMonitor;
+            _userOptionsMonitor = userOptionsMonitor;
         }
+
         public string GenerateJwtToken(UserModel user)
         {
             if (user == null) throw new ArgumentNullException(nameof(user));
 
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtOptions:Key"]));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptionsMonitor.CurrentValue.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
@@ -27,8 +34,8 @@ namespace WebCalcAPI.Services
                 new Claim(ClaimTypes.Role, user.Role)
             };
             var token = new JwtSecurityToken(
-                issuer: _config["JwtOptions:Issuer"],
-                audience: _config["JwtOptions:Audience"],
+                issuer: _jwtOptionsMonitor.CurrentValue.Issuer,
+                audience: _jwtOptionsMonitor.CurrentValue.Audience,
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(15),
                 signingCredentials: credentials
@@ -38,7 +45,7 @@ namespace WebCalcAPI.Services
 
         public UserModel? Authenticate(UserLogin? userLogin)
         {
-            var validUsers = _config.GetSection("ValidUsers").Get<List<UserModel>>();
+            var validUsers = _userOptionsMonitor.Value;
             if (userLogin is null) return null;
             return validUsers.FirstOrDefault(user =>
                 user.UserName == userLogin.UserName && user.Password == userLogin.Password);

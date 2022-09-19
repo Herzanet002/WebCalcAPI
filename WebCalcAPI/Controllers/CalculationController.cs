@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using WebCalcAPI.Contracts.Services;
 using WebCalcAPI.Models;
+using WebCalcAPI.Models.Users;
 
 namespace WebCalcAPI.Controllers
 {
-
     [Route("/api/[controller]")]
     public class CalculationController : Controller
     {
@@ -24,12 +24,28 @@ namespace WebCalcAPI.Controllers
             _authenticateService = authenticateService;
         }
 
-        private async Task<CalculationModel> WaitTill(double left, double right, string operation)
+        private async Task<object> WaitTill(double left, double right, string operation)
         {
             return await _calculationService.TwoOperandCalculate(left, right, operation);
         }
 
-        //[Authorize(Roles = "Admin")]
+        private async Task<object> ParamWait(string param)
+        {
+            await Task.Delay(15000);
+            return param + "HELLO";
+        }
+
+        [HttpPost("{param1}")]
+        public Guid Acceptor(string param)
+        {
+            var guid = Guid.NewGuid();
+            _logger.LogInformation($"Assigned new GUID: {guid}");
+            _asyncReplyRequestService.CreateNewTask(guid, ParamWait(param));
+            Response.StatusCode = 201;
+            return guid;
+        }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost("{left} {operation} {right}")]
         public Guid ProcessingWorkAcceptor(double left, double right, string operation)
         {
@@ -50,15 +66,16 @@ namespace WebCalcAPI.Controllers
                 case TaskStatus.WaitingForActivation:
                     _logger.LogWarning($"The task {uniqId} is working yet");
                     return Accepted($"The task {uniqId} is working yet");
+
                 case TaskStatus.RanToCompletion:
                     return Ok(await _asyncReplyRequestService.GetTaskResult(uniqId));
+
                 default:
                     _logger.LogInformation($"The task {uniqId} was not completed \n Status code: {taskStatus}");
                     return BadRequest($"The task {uniqId} was not completed \n Status code: {taskStatus}");
             }
         }
 
-        [AllowAnonymous]
         [HttpPost, Route("/api/[controller]/login")]
         public IActionResult Login([FromBody] UserLogin userLogin)
         {
@@ -68,5 +85,4 @@ namespace WebCalcAPI.Controllers
             return Ok(token);
         }
     }
-
 }

@@ -2,8 +2,10 @@
 {
     public interface IAsyncReplyRequestService<T>
     {
-        void CreateNewTask(Guid guid, Task<T> task);
+        void CreateNewTask(Guid guid, Task<object> task);
+
         TaskStatus GetTaskStatus(Guid guid);
-        public Task<T> GetTaskResult(Guid guid);
+
+        public Task<object> GetTaskResult(Guid guid);
     }
 }

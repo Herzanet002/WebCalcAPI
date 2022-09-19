@@ -37,9 +37,6 @@ public class DataClass
                 Operator = "/",
                 Result = 2
             });
-
         }
     }
-
-
 }

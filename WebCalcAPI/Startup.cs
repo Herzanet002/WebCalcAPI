@@ -1,9 +1,12 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 using WebCalcAPI.Contracts.Services;
 using WebCalcAPI.Middleware;
 using WebCalcAPI.Models;
+using WebCalcAPI.Models.Users;
 using WebCalcAPI.Services;
 
 namespace WebCalcAPI
@@ -23,8 +26,41 @@ namespace WebCalcAPI
             services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(option =>
+            {
+                var securityDefinition = new OpenApiSecurityScheme()
+                {
+                    Name = "Bearer",
+                    BearerFormat = "JWT",
+                    Scheme = "bearer",
+                    Description = "Specify the authorization token",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                };
+                option.AddSecurityDefinition("jwt_auth", securityDefinition);
+
+                // Make sure swagger UI requires a Bearer token specified
+                var securityScheme = new OpenApiSecurityScheme()
+                {
+                    Reference = new OpenApiReference()
+                    {
+                        Id = "jwt_auth",
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+                var securityRequirements = new OpenApiSecurityRequirement()
+                {
+                    {securityScheme, Array.Empty<string>()},
+                };
+                option.AddSecurityRequirement(securityRequirements);
+            });
             services.AddControllersWithViews();
+
+            services.Configure<List<UserModel>>(
+                Configuration.GetSection("ValidUsers"));
+            services.Configure<JwtOptions>(
+                Configuration.GetSection("JwtOptions"));
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -39,24 +75,22 @@ namespace WebCalcAPI
                         ValidAudience = Configuration["JwtOptions:Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtOptions:Key"]))
                     };
-
                 });
             services.AddSingleton<ICalculationService, CalculationService>();
             services.AddSingleton<IAsyncReplyRequestService<CalculationModel>, AsyncReplyRequestService<CalculationModel>>();
             services.AddSingleton<IAuthenticateService, AuthenticateService>();
         }
 
-        //requestpipeline
-        //middleware
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // Configure the HTTP request pipeline.
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", $"My API v{Assembly.GetExecutingAssembly().GetName().Version}");
+                });
             }
 
             app.UseHttpsRedirection();
@@ -72,13 +106,7 @@ namespace WebCalcAPI
                 {
                     await context.Response.WriteAsync("Hello World!");
                 });
-                //endpoints.Map("/api/requestStatus/{uniqId}", async context => {
-                //    context.Response.ContentType = "text/html; charset=utf-8";
-                //    await context.Response.WriteAsync($"{context.Request}");
-                //});
             });
-
-
         }
     }
 }
