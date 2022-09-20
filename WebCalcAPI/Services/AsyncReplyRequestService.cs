@@ -4,7 +4,7 @@ namespace WebCalcAPI.Services
 {
     public class AsyncReplyRequestService<T> : IAsyncReplyRequestService<T>
     {
-        public Dictionary<Guid, Task<object>> TasksContainer { get; set; }
+        private Dictionary<Guid, Task<object>> TasksContainer { get; }
 
         public AsyncReplyRequestService()
         {
