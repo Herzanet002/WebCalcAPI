@@ -8,7 +8,7 @@ public class CalculationService : ICalculationService
     public async Task<CalculationResultModel> TwoOperandCalculate(ComputeModel computeModel)
     {
         var result = HandleResult(computeModel.LeftOperand, computeModel.RightOperand, computeModel.Operator);
-        //await Task.Delay(15000);
+        Task.Delay(5000).Wait();
         return await new ValueTask<CalculationResultModel>(new CalculationResultModel
         {
             LeftOperand = computeModel.LeftOperand,
