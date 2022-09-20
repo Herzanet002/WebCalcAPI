@@ -22,10 +22,10 @@ namespace WebCalcAPI.Services
             return await taskValue!;
         }
 
-        public TaskStatus GetTaskStatus(Guid guid)
+        public bool IsTaskReady(Guid guid)
         {
             TasksContainer.TryGetValue(guid, out var taskValue);
-            return taskValue?.Status ?? TaskStatus.Faulted;
+            return taskValue is { IsCompleted: true };
         }
     }
 }

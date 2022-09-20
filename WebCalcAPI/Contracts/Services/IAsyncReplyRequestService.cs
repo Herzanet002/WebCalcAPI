@@ -4,7 +4,7 @@
     {
         void CreateNewTask(Guid guid, Task<object> task);
 
-        TaskStatus GetTaskStatus(Guid guid);
+        bool IsTaskReady(Guid guid);
 
         public Task<object> GetTaskResult(Guid guid);
     }

@@ -6,19 +6,19 @@ namespace WebCalcAPITests
 {
     public class AsyncReplyRequestServiceTest
     {
-        private IAsyncReplyRequestService<CalculationModel> _asyncReplyRequestService = null!;
-        private Dictionary<Guid, Task<CalculationModel>> TasksContainer { get; set; }
+        private IAsyncReplyRequestService<CalculationResultModel> _asyncReplyRequestService = null!;
+        private Dictionary<Guid, Task<CalculationResultModel>> TasksContainer { get; set; }
 
         [SetUp]
         public void Setup()
         {
-            _asyncReplyRequestService = new AsyncReplyRequestService<CalculationModel>();
-            TasksContainer = new Dictionary<Guid, Task<CalculationModel>>();
+            _asyncReplyRequestService = new AsyncReplyRequestService<CalculationResultModel>();
+            TasksContainer = new Dictionary<Guid, Task<CalculationResultModel>>();
         }
 
         //[Test]
         //[TestCaseSource(typeof(DataClass), nameof(DataClass.TestCalculationModelCasesInAsyncReplyRequestService))]
-        //public void CreateNewTask(Guid guid, Task<CalculationModel> task)
+        //public void CreateNewTask(Guid guid, Task<CalculationResultModel> task)
         //{
         //    TasksContainer.Add(guid, task);
         //}

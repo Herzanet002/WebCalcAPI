@@ -16,7 +16,7 @@ namespace WebCalcAPITests
 
         [Test]
         [TestCaseSource(typeof(DataClass), nameof(DataClass.TestCalculationModelCasesInCalculationService))]
-        public async Task<CalculationModel> TwoOperandCalculateTest(double left, double right, string operation)
+        public async Task<CalculationResultModel> TwoOperandCalculateTest(double left, double right, string operation)
         {
             return await _calculationService.TwoOperandCalculate(left, right, operation);
         }

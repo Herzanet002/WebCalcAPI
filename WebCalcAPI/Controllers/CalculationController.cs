@@ -10,12 +10,12 @@ namespace WebCalcAPI.Controllers
     public class CalculationController : Controller
     {
         private readonly ICalculationService _calculationService;
-        private readonly IAsyncReplyRequestService<CalculationModel> _asyncReplyRequestService;
+        private readonly IAsyncReplyRequestService<CalculationResultModel> _asyncReplyRequestService;
         private readonly ILogger<CalculationController> _logger;
         private readonly IAuthenticateService _authenticateService;
 
         public CalculationController(ICalculationService calculationService,
-            IAsyncReplyRequestService<CalculationModel> asyncReplyRequestService,
+            IAsyncReplyRequestService<CalculationResultModel> asyncReplyRequestService,
             ILogger<CalculationController> logger, IAuthenticateService authenticateService)
         {
             _calculationService = calculationService;
@@ -24,34 +24,22 @@ namespace WebCalcAPI.Controllers
             _authenticateService = authenticateService;
         }
 
-        private async Task<object> WaitTill(double left, double right, string operation)
+        private async Task<object> WaitTill(ComputeModel computeModel, CancellationToken cancellationToken)
         {
-            return await _calculationService.TwoOperandCalculate(left, right, operation);
-        }
-
-        private async Task<object> ParamWait(string param)
-        {
-            await Task.Delay(15000);
-            return param + "HELLO";
-        }
-
-        [HttpPost("{param1}")]
-        public Guid Acceptor(string param)
-        {
-            var guid = Guid.NewGuid();
-            _logger.LogInformation($"Assigned new GUID: {guid}");
-            _asyncReplyRequestService.CreateNewTask(guid, ParamWait(param));
-            Response.StatusCode = 201;
-            return guid;
+            return await _calculationService.TwoOperandCalculate(computeModel);
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost("{left} {operation} {right}")]
-        public Guid ProcessingWorkAcceptor(double left, double right, string operation)
+        [HttpPost, Route("/api/[controller]/calc/")]
+        public async Task<object> ProcessingWorkAcceptor(ComputeModel computeModel, int timeout, CancellationToken cancellationToken)
         {
+            var calculationTask = WaitTill(computeModel, cancellationToken);
+            if (await Task.WhenAny(calculationTask, Task.Delay(timeout, cancellationToken)) == calculationTask)
+                return await calculationTask;
+
             var guid = Guid.NewGuid();
             _logger.LogInformation($"Assigned new GUID: {guid}");
-            _asyncReplyRequestService.CreateNewTask(guid, WaitTill(left, right, operation));
+            _asyncReplyRequestService.CreateNewTask(guid, calculationTask);
             Response.StatusCode = 201;
             return guid;
         }
@@ -59,21 +47,11 @@ namespace WebCalcAPI.Controllers
         [HttpGet("{uniqId}")]
         public async Task<IActionResult> ProcessingBackgroundWorker(Guid uniqId)
         {
-            var taskStatus = _asyncReplyRequestService.GetTaskStatus(uniqId);
+            var taskStatus = _asyncReplyRequestService.IsTaskReady(uniqId);
 
-            switch (taskStatus)
-            {
-                case TaskStatus.WaitingForActivation:
-                    _logger.LogWarning($"The task {uniqId} is working yet");
-                    return Accepted($"The task {uniqId} is working yet");
-
-                case TaskStatus.RanToCompletion:
-                    return Ok(await _asyncReplyRequestService.GetTaskResult(uniqId));
-
-                default:
-                    _logger.LogInformation($"The task {uniqId} was not completed \n Status code: {taskStatus}");
-                    return BadRequest($"The task {uniqId} was not completed \n Status code: {taskStatus}");
-            }
+            if (taskStatus)
+                return Ok(await _asyncReplyRequestService.GetTaskResult(uniqId));
+            return Accepted($"The task {uniqId} is working yet");
         }
 
         [HttpPost, Route("/api/[controller]/login")]

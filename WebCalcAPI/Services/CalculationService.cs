@@ -5,16 +5,16 @@ namespace WebCalcAPI.Services;
 
 public class CalculationService : ICalculationService
 {
-    public async Task<CalculationModel> TwoOperandCalculate(double left, double right, string operation)
+    public async Task<CalculationResultModel> TwoOperandCalculate(ComputeModel computeModel)
     {
-        var result = HandleResult(left, right, operation);
-        await Task.Delay(15000);
-        return await new ValueTask<CalculationModel>(new CalculationModel
+        var result = HandleResult(computeModel.LeftOperand, computeModel.RightOperand, computeModel.Operator);
+        //await Task.Delay(15000);
+        return await new ValueTask<CalculationResultModel>(new CalculationResultModel
         {
-            LeftOperand = left,
-            RightOperand = right,
+            LeftOperand = computeModel.LeftOperand,
+            RightOperand = computeModel.RightOperand,
             Result = result,
-            Operator = operation
+            Operator = computeModel.Operator
         });
     }
 
@@ -29,4 +29,6 @@ public class CalculationService : ICalculationService
             _ => .0
         };
     }
+
+
 }

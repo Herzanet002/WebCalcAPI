@@ -1,7 +1,7 @@
-using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 using System.Text;
 using WebCalcAPI.Contracts.Services;
 using WebCalcAPI.Middleware;
@@ -77,7 +77,7 @@ namespace WebCalcAPI
                     };
                 });
             services.AddSingleton<ICalculationService, CalculationService>();
-            services.AddSingleton<IAsyncReplyRequestService<CalculationModel>, AsyncReplyRequestService<CalculationModel>>();
+            services.AddSingleton<IAsyncReplyRequestService<CalculationResultModel>, AsyncReplyRequestService<CalculationResultModel>>();
             services.AddSingleton<IAuthenticateService, AuthenticateService>();
         }
 
