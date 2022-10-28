@@ -14,7 +14,6 @@ public class DataClass
                 LeftOperand = 1,
                 RightOperand = 2,
                 Operator = "+"
-                
             }).Returns(new CalculationResultModel
             {
                 LeftOperand = 1,
@@ -22,13 +21,12 @@ public class DataClass
                 Operator = "+",
                 Result = 3.0
             });
-            
+
             yield return new TestCaseData(new ComputeModel
             {
                 LeftOperand = 2,
                 RightOperand = 5,
                 Operator = "-"
-                
             }).Returns(new CalculationResultModel
             {
                 LeftOperand = 2,
@@ -36,13 +34,12 @@ public class DataClass
                 Operator = "-",
                 Result = -3.0
             });
-            
+
             yield return new TestCaseData(new ComputeModel
             {
                 LeftOperand = -3,
                 RightOperand = 2,
                 Operator = "*"
-                
             }).Returns(new CalculationResultModel
             {
                 LeftOperand = -3,
@@ -50,13 +47,12 @@ public class DataClass
                 Operator = "*",
                 Result = -6
             });
-            
+
             yield return new TestCaseData(new ComputeModel
             {
                 LeftOperand = 4,
                 RightOperand = 2,
                 Operator = "/"
-                
             }).Returns(new CalculationResultModel
             {
                 LeftOperand = 4,

@@ -1,6 +1,4 @@
-﻿using System.Threading;
-
-namespace WebCalcAPI.Extensions
+﻿namespace WebCalcAPI.Extensions
 {
     public static class TaskExtension
     {
@@ -10,9 +8,9 @@ namespace WebCalcAPI.Extensions
             var completedTask = await Task.WhenAny(task, Task.Delay(TimeSpan.FromMilliseconds(timeout), timeoutCancellationTokenSource.Token));
             if (completedTask == task)
                 timeoutCancellationTokenSource.Cancel();
-                
+
             return completedTask == task;
         }
-            
+
     }
 }

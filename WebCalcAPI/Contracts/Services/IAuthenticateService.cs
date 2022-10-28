@@ -4,8 +4,8 @@ namespace WebCalcAPI.Contracts.Services
 {
     public interface IAuthenticateService
     {
-        public string GenerateJwtToken(UserModel model);
+        string GenerateJwtToken(UserModel model);
 
-        public UserModel? Authenticate(UserLogin? userLogin);
+        UserModel? Authenticate(UserLogin? userLogin);
     }
 }

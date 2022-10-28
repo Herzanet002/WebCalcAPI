@@ -6,6 +6,6 @@
 
         bool IsTaskReady(Guid guid);
 
-        public Task<object> GetTaskResult(Guid guid);
+        Task<object> GetTaskResult(Guid guid);
     }
 }

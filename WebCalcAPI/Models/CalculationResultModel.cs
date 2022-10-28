@@ -1,4 +1,5 @@
-﻿namespace WebCalcAPI.Models;
+﻿// ReSharper disable NonReadonlyMemberInGetHashCode
+namespace WebCalcAPI.Models;
 
 public class CalculationResultModel : ComputeModel
 {
@@ -6,12 +7,15 @@ public class CalculationResultModel : ComputeModel
 
     public override bool Equals(object? obj)
     {
-        var other = obj as CalculationResultModel;
+        return obj is CalculationResultModel other &&
+               other.LeftOperand.Equals(LeftOperand) &&
+               other.RightOperand.Equals(RightOperand) &&
+               other.Operator.Equals(Operator) &&
+               other.Result.Equals(Result);
+    }
 
-        return other != null &&
-               other.LeftOperand == LeftOperand &&
-               other.RightOperand == RightOperand &&
-               other.Operator == Operator &&
-               other.Result == Result;
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(LeftOperand, RightOperand, Result, Operator);
     }
 }

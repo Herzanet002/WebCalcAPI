@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebCalcAPI.Contracts.Services;
 using WebCalcAPI.Extensions;
 using WebCalcAPI.Models;
@@ -29,15 +30,14 @@ public class CalculationController : Controller
         return await _calculationService.TwoOperandCalculate(computeModel);
     }
 
-    //[Authorize(Roles = "Admin")]
-    [HttpPost, Route("/api/[controller]/calc/")]
+    [Authorize(Roles = "Admin")]
+    [HttpPost, Route("calc")]
     public async Task<object> ProcessingWorkAcceptor(ComputeModel computeModel, int timeout)
     {
         var calculationTask = WaitTill(computeModel);
 
-        if (await calculationTask.CanTaskBeCompletedWithinTime(timeout))
+        if (await calculationTask.CanTaskBeCompletedWithinTime(timeout).ConfigureAwait(false))
             return await calculationTask;
-            
 
         var guid = Guid.NewGuid();
         _logger.LogInformation($"Assigned new GUID: {guid}");
@@ -56,7 +56,7 @@ public class CalculationController : Controller
         return Accepted($"The task {uniqId} is working yet");
     }
 
-    [HttpPost, Route("/api/[controller]/login")]
+    [HttpPost, Route("login")]
     public IActionResult Login([FromBody] UserLogin userLogin)
     {
         var user = _authenticateService.Authenticate(userLogin);
