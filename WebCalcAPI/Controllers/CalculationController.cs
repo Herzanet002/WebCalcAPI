@@ -10,10 +10,10 @@ namespace WebCalcAPI.Controllers;
 [Route("/api/[controller]")]
 public class CalculationController : Controller
 {
-    private readonly ICalculationService _calculationService;
     private readonly IAsyncReplyRequestService<CalculationResultModel> _asyncReplyRequestService;
-    private readonly ILogger<CalculationController> _logger;
     private readonly IAuthenticateService _authenticateService;
+    private readonly ICalculationService _calculationService;
+    private readonly ILogger<CalculationController> _logger;
 
     public CalculationController(ICalculationService calculationService,
         IAsyncReplyRequestService<CalculationResultModel> asyncReplyRequestService,
@@ -31,7 +31,8 @@ public class CalculationController : Controller
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpPost, Route("calc")]
+    [HttpPost]
+    [Route("calc")]
     public async Task<object> ProcessingWorkAcceptor(ComputeModel computeModel, int timeout)
     {
         var calculationTask = WaitTill(computeModel);
@@ -56,7 +57,8 @@ public class CalculationController : Controller
         return Accepted($"The task {uniqId} is working yet");
     }
 
-    [HttpPost, Route("login")]
+    [HttpPost]
+    [Route("login")]
     public IActionResult Login([FromBody] UserLogin userLogin)
     {
         var user = _authenticateService.Authenticate(userLogin);

@@ -12,5 +12,4 @@ public class ComputeModel
 
     [Required(ErrorMessage = "Operator cannot be empty!")]
     public string Operator { get; set; } = string.Empty;
-
 }

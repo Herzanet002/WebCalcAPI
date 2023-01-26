@@ -1,11 +1,10 @@
-﻿namespace WebCalcAPI.Contracts.Services
+﻿namespace WebCalcAPI.Contracts.Services;
+
+public interface IAsyncReplyRequestService<T>
 {
-    public interface IAsyncReplyRequestService<T>
-    {
-        void CreateNewTask(Guid guid, Task<object> task);
+    void CreateNewTask(Guid guid, Task<object> task);
 
-        bool IsTaskReady(Guid guid);
+    bool IsTaskReady(Guid guid);
 
-        Task<object> GetTaskResult(Guid guid);
-    }
+    Task<object> GetTaskResult(Guid guid);
 }

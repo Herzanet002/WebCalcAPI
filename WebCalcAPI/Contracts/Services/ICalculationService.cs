@@ -1,9 +1,8 @@
 ﻿using WebCalcAPI.Models;
 
-namespace WebCalcAPI.Contracts.Services
+namespace WebCalcAPI.Contracts.Services;
+
+public interface ICalculationService
 {
-    public interface ICalculationService
-    {
-        Task<CalculationResultModel> TwoOperandCalculate(ComputeModel computeModel);
-    }
+    Task<CalculationResultModel> TwoOperandCalculate(ComputeModel computeModel);
 }

@@ -1,13 +1,12 @@
-﻿namespace WebCalcAPI.Models
+﻿namespace WebCalcAPI.Models;
+
+public class Operators
 {
-    public class Operators
-    {
-        public const string ADD = "+";
+    public const string ADD = "+";
 
-        public const string SUB = "-";
+    public const string SUB = "-";
 
-        public const string MUL = "*";
+    public const string MUL = "*";
 
-        public const string DIV = "/";
-    }
+    public const string DIV = "/";
 }

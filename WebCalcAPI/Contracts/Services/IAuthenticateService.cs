@@ -1,11 +1,10 @@
 ﻿using WebCalcAPI.Models.Users;
 
-namespace WebCalcAPI.Contracts.Services
-{
-    public interface IAuthenticateService
-    {
-        string GenerateJwtToken(UserModel model);
+namespace WebCalcAPI.Contracts.Services;
 
-        UserModel? Authenticate(UserLogin? userLogin);
-    }
+public interface IAuthenticateService
+{
+    string GenerateJwtToken(UserModel model);
+
+    UserModel? Authenticate(UserLogin? userLogin);
 }

@@ -1,4 +1,5 @@
 ﻿// ReSharper disable NonReadonlyMemberInGetHashCode
+
 namespace WebCalcAPI.Models;
 
 public class CalculationResultModel : ComputeModel

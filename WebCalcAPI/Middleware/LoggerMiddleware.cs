@@ -1,11 +1,11 @@
-﻿namespace WebCalcAPI.Middleware;
+﻿using Microsoft.AspNetCore.Http.Extensions;
 
-using Microsoft.AspNetCore.Http.Extensions;
+namespace WebCalcAPI.Middleware;
 
 public class LoggerMiddleware
 {
-    private readonly RequestDelegate _next;
     private readonly ILogger<LoggerMiddleware> _logger;
+    private readonly RequestDelegate _next;
 
     public LoggerMiddleware(RequestDelegate request, ILogger<LoggerMiddleware> logger)
     {
@@ -15,7 +15,7 @@ public class LoggerMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        MemoryStream requestBodyStream = null;
+        MemoryStream? requestBodyStream = null;
         try
         {
             var requestBody = context.Request.Body;
